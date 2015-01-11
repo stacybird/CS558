@@ -1,5 +1,5 @@
-# Homework 1  Stacy Watts   swatts@pdx.edu
 #! /usr/bin/env python3
+# Homework 1  Stacy Watts   swatts@pdx.edu
 
 def hi(s):
     print ('Hello '+ s + '!')
