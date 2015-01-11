@@ -1,3 +1,4 @@
+-- Homework 1  Stacy Watts   swatts@pdx.edu
 module Main where
 
 -- This is a comment that runs from the "--" to the end of the line
