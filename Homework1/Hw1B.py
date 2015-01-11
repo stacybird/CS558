@@ -25,7 +25,7 @@ class AddExp:
         self.e2 = e2
 
     def toString(self):
-        return '(+ ' + self.e1.toString() + " " + self.e2.toString() + ')'  
+        return '(+ ' + self.e1.toString() + " " + self.e2.toString() + ')'
 
     def eval(self):
         v1 = self.e1.eval()
@@ -38,7 +38,7 @@ class SubExp:
         self.e2 = e2
 
     def toString(self):
-        return '(- ' + self.e1.toString() + " " + self.e2.toString() + ')'  
+        return '(- ' + self.e1.toString() + " " + self.e2.toString() + ')'
 
     def eval(self):
         v1 = self.e1.eval()
@@ -51,7 +51,7 @@ class MulExp:
         self.e2 = e2
 
     def toString(self):
-        return '(* ' + self.e1.toString() + " " + self.e2.toString() + ')'  
+        return '(* ' + self.e1.toString() + " " + self.e2.toString() + ')'
 
     def eval(self):
         v1 = self.e1.eval()
@@ -64,7 +64,7 @@ class DivExp:
         self.e2 = e2
 
     def toString(self):
-        return '(/ ' + self.e1.toString() + " " + self.e2.toString() + ')'  
+        return '(/ ' + self.e1.toString() + " " + self.e2.toString() + ')'
 
     def eval(self):
         v1 = self.e1.eval()
