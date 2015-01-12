@@ -1,0 +1,19 @@
+{- Homework 1  Stacy Watts   swatts@pdx.edu -}
+{-
+The Haskell version and the Python version of the compilers also behave
+differently on some programs involving large integers. Find out what the
+differences are, and why they occur. Write a single simple program in the E1
+language, that behaves differently under the two interpreters. That is if you
+run the Python interpreter on the file, and you run the Haskell interpreter on
+the same file, you get different answers. 
+... a comment explaining the differences and the reasons for them. (Note: There
+are several differences. Your sample program may illustrate only one of them,
+but your comment should describe all that you find. 
+-}
+
+(+
+9999999999999999999
+9999999999999999999
+)
+
+
