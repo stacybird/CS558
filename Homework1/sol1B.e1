@@ -1,19 +1,35 @@
 {- Homework 1  Stacy Watts   swatts@pdx.edu -}
 {-
-The Haskell version and the Python version of the compilers also behave
-differently on some programs involving large integers. Find out what the
-differences are, and why they occur. Write a single simple program in the E1
-language, that behaves differently under the two interpreters. That is if you
-run the Python interpreter on the file, and you run the Haskell interpreter on
-the same file, you get different answers. 
 ... a comment explaining the differences and the reasons for them. (Note: There
 are several differences. Your sample program may illustrate only one of them,
 but your comment should describe all that you find. 
 -}
 
-(+
-9999999999999999999
-9999999999999999999
-)
+(+ 9999999999999999999 9999999999999999999 )
 
+{- Python3: Evaluates to: 19999999999999999998
+   Haskell: Evaluates to: 1553255926290448382
+
+If we check the max int size in Haskell:
+   Prelude> minBound :: Int
+   -9223372036854775808
+   Prelude> maxBound :: Int
+   9223372036854775807
+
+so this short program exceeds the bound in Haskell, and causes a wrap.  
+The impementation in Python3 on the other hand in spite of the maxsize:
+   >>> sys.maxsize
+   9223372036854775807
+handles large numbers much differently.  The int type is actually a long in 
+Python3.  Therefore the only practical size constraint should be the memory
+available.
+
+At the boundaries on division, Python rounds toward minus infinity.  This makes
+1/2 = 0, wheras -1/2 = -1.  
+Haskell seems to do the same. Other than additional constraints and issues
+around the max size issue with math in Haskell, I couldn't find other
+discrepancies.  Both handle negatives, both handle rounding the same direction.
+The only discrepancies seem to have to do with size of number allowed prior to
+a wrap around error.  
+-}
 
