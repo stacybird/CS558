@@ -1,12 +1,22 @@
 {- Homework 2  Stacy Watts   swatts@pdx.edu -}
-{- write out all primes in [2..100], using 
-  inefficient algorithm from lecture 1. -}
-(block
-  (if (<= a 0) 
-      (:= b 1) 
-      (block))
-  (if (<= b 0) 
-      (:= a 1) 
-      (block))
-  (- a b)
-)
+(+ (- (if (<= a 0) (:= a 3) (block)) 
+      (if (<= a 0) (:= a 20) (block)))
+   a 
+) 
+
+{-
+This program tests which direct we evaluate, left to right, or right to
+left.  The value of the output will change depending on the conditional
+check on a.  Since undefined variables are initalized to 0, the test
+uses that feature for both branches as the check on the execution path.
+In Python 3, the result is always 6 (3+3).  In Haskell it is always -20 
+(0-20+0).  This shows that Haskel evaluates the a to be zero twice, thus
+it evaluates form the right.  Python starts at the left, because by the
+time the last a is evaluated, it has been assigned.  
+
+Unfortunately this isn't enough to make guesses about the languages 
+Haskell and Python without first reviewing the e2 language implemntations
+to see if this is a code design implementation choice, or if this really
+is a sideffect of the language choice e2 was implemented in.
+-}
+
