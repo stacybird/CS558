@@ -1,0 +1,12 @@
+{- Homework 2  Stacy Watts   swatts@pdx.edu -}
+{- write out all primes in [2..100], using 
+  inefficient algorithm from lecture 1. -}
+(block
+  (if (<= a 0) 
+      (:= b 1) 
+      (block))
+  (if (<= b 0) 
+      (:= a 1) 
+      (block))
+  (- a b)
+)
