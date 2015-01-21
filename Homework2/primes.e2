@@ -1,0 +1,17 @@
+{- write out all primes in [2..100], using 
+  inefficient algorithm from lecture 1. -}
+(block
+  (:= n 2)
+  (while (<= n 100)
+    (block 
+      (:= p 1)  {- flag indicating primeness: initialize to true -}
+      (:= d 2) 
+      (while (<= d (- n 1))
+        (block            {- we have no mod operator... -}
+          (:= m (* d (/ n d)))  
+          (if (<= n m)  {- always have m <= n -}
+              (:= p 0)  {- i.e., n = m, so d divides n, so set p false -}
+              (block))  {- (block) is a no-op -}
+          (:= d (+ d 1))))
+      (if p (write n) (block))
+      (:= n (+ n 1)))))

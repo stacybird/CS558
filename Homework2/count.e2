@@ -1,0 +1,2 @@
+(block (:= n 1)
+       (while (<= n 2) (block (write n) (:= n (+ n 1)))))
