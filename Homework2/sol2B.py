@@ -60,6 +60,31 @@ class WhileExp:
             self.e2.eval(env)
         return 0
 
+
+class ForExp:
+    def __init__(self, x, e1, e2, e3):
+        self.x  = x
+        self.e1 = e1
+        self.e2 = e2
+        self.e3 = e3
+
+    def toString(self):        
+        return "(for " + self.x + " " + self.e1.toString() + " " + self.e2.toString() + " " + self.e3.toString() + ")"
+
+# Evaluating (for x e1 e2 e3 ) 
+# first evaluates e1 to a value v1 and stores v1 into x . 
+# It then repeats the following steps: 
+#    evaluate e2 to a value v2 ; 
+#    fetch x ; 
+#    if x > v2 then terminate evaluation of the for, yielding the value 0; otherwise, evaluate e3 and discard the yielded result, fetch x , add one to it, store back into x , and repeat. 
+    def eval(self, env):
+        v1 = self.e1.eval(env)
+        self.x = v1
+        while (self.e2.eval(env) != 0):
+            self.e3.eval(env)
+        return 0
+
+
 class IfExp:
     def __init__(self, e1, e2, e3):
         self.e1 = e1
@@ -353,7 +378,7 @@ def parse_exp(tokens):
                 e1 = parse_exp(tokens)
                 e2 = parse_exp(tokens)
                 e3 = parse_exp(tokens)
-                raise ParseError('Unsupported expression', tok.lineno) # change this!!
+                result = ForExp(x, e1, e2, e3)
             elif keywd == "if":
                 e1 = parse_exp(tokens)
                 e2 = parse_exp(tokens)
