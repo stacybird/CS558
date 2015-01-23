@@ -34,6 +34,7 @@ data Exp
   | Int  Int
   | Asgn  (Vname , Exp)
   | While  (Exp , Exp)
+  | For  (Var, Exp , Exp , Exp)
   | If  (Exp , Exp , Exp)
   | Write Exp
   | Block [Exp]
@@ -183,6 +184,14 @@ compile next_label exp = do { initLabel; comp exp}
               ; return([Label top_lab] ++ cs1 ++   
                        [Branchz bottom_lab] ++ cs2 ++ [Pop] ++         {- throw away value of body -}
                        [Branch top_lab, Label bottom_lab, Const 0])}   {- overall expression evalutes to 0 -}
+        comp ( For (e0,e1,e2,e3)) =  {-fix all this. ******-}
+           do { top_lab <- new_label
+              ; bottom_lab <- new_label
+              ; cs1 <-  comp e1
+              ; cs2 <- comp e2
+              ; return([Label top_lab] ++ cs1 ++   
+                       [Branchz bottom_lab] ++ cs2 ++ [Pop] ++         {- throw away value of body -}
+                       [Branch top_lab, Label bottom_lab, Const 0])}   {- overall expression evalutes to 0 -}
         comp (If (e1,e2,e3)) =  
           do false_lab <- new_label
              join_lab <- new_label
@@ -249,6 +258,9 @@ write pos args = report pos (length args) 1 "write"
 
 while pos [x,y] = While(x,y)
 while pos args = report pos (length args) 2 "while"
+
+for pos [Var v,x,y,z] = For(v,x,y,z)
+for pos args = report pos (length args) 4 "for"
 
 add pos [x,y] = Add(x,y)
 add pos args = report pos (length args) 2 "+"
@@ -377,6 +389,7 @@ ppExp (Var v) = txt v
 ppExp (Int n) = txt (show n)
 ppExp (Asgn (v,e))= txt "(:= " PP.<> PP.nest 3 (PP.sep [txt v , ppExp e PP.<> txt ")"])
 ppExp (While (x,y))= txt "(while " PP.<> PP.nest 3 (PP.sep [ppExp x , ppExp y PP.<> txt ")"])
+ppExp (For (w,x,y,z))= txt "(for " PP.<> PP.nest 3 (PP.sep [txt w, ppExp x , ppExp y, ppExp z PP.<> txt ")"])
 ppExp (If (x,y,z))= txt "(if " PP.<> PP.nest 3 (PP.sep [ppExp x , ppExp y,ppExp z PP.<> txt ")"])
 ppExp (Write x)= txt "(write " PP.<> PP.nest 3 (PP.sep [ppExp x PP.<> txt ")"])
 ppExp (Block es) = txt "(block " PP.<> PP.nest 3 (PP.sep ((map ppExp es)++ [txt ")"]))
@@ -402,6 +415,7 @@ exp_to_string exp =
       Int i -> show i
       Asgn (v,e) -> "(:= " ++ v ++ " " ++ (exp_to_string e) ++ ")"
       While (e1,e2) -> "(while " ++ (exp_to_string e1) ++ " " ++ (exp_to_string e2) ++ ")"
+      For (v,e1,e2,e3) -> "(for " ++ v ++ " " ++ (exp_to_string e1) ++ " " ++ (exp_to_string e2) ++ " " ++ (exp_to_string e3) ++  ")"
       If (e1,e2,e3) -> "(if " ++ (exp_to_string e1) ++ " " ++ (exp_to_string e2) ++ " " ++ (exp_to_string e3) ++ ")"
       Write e -> "(write " ++ (exp_to_string e) ++ ")"
       Block es -> plist "(block " (map exp_to_string es) " " ")"
