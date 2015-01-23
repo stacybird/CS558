@@ -24,6 +24,14 @@ Homework 2  Stacy Watts   swatts@pdx.edu
 
 
 
+                        __________________(ASSIGN)
+                            { z < 0 }
+                            y := -x
+                            { z < 0 }
+__________________(ASSIGN)
+    { z < 0 }
+    y := x
+    { z < 0 }
 __________________(GIF)
     { z < 0 }
     gif x <= 0 -> y := -x              __________________(ASSIGN)
