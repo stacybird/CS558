@@ -71,17 +71,15 @@ class ForExp:
     def toString(self):        
         return "(for " + self.x + " " + self.e1.toString() + " " + self.e2.toString() + " " + self.e3.toString() + ")"
 
-# Evaluating (for x e1 e2 e3 ) 
-# first evaluates e1 to a value v1 and stores v1 into x . 
-# It then repeats the following steps: 
-#    evaluate e2 to a value v2 ; 
-#    fetch x ; 
-#    if x > v2 then terminate evaluation of the for, yielding the value 0; otherwise, evaluate e3 and discard the yielded result, fetch x , add one to it, store back into x , and repeat. 
     def eval(self, env):
         v1 = self.e1.eval(env)
-        self.x = v1
-        while (self.e2.eval(env) != 0):
-            self.e3.eval(env)
+        env[self.x] = v1
+        v2 = self.e2.eval(env)
+        x = env.get(self.x)
+        while (x <= v2):
+          self.e3.eval(env)
+          x = env.get(self.x) + 1
+          env[self.x] = x
         return 0
 
 
