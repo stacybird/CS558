@@ -1,0 +1,71 @@
+Homework 2  Stacy Watts   swatts@pdx.edu
+
+1. Extend the axiomatic semantics given in lecture by writing down an 
+   appropriate rule of inference (GIF) for gif statements. (5 points)
+
+   {P} S1 {Q} or {P} S2 {Q} or ... {P} Sn {Q}
+  ____________________________________________
+       {P} gif S1 or S2 or .... Sn  {Q}          
+
+
+
+
+2.  Derive the following triple, by presenting a formal proof tree for it 
+    (as shown in lecture).  (15 points) 
+
+    { z < 0 }
+    while (x > -5) do
+    gif x <= 0 -> y := -x
+      | x >= 0 -> y := x
+    end;
+    z := z - y
+    end
+    { z < 0 }
+
+
+
+__________________(GIF)
+    { z < 0 }
+    gif x <= 0 -> y := -x              __________________(ASSIGN)
+      | x >= 0 -> y := x                  { z < 0 }
+    end;                                  z := z - y
+    { z < 0 }                             { z < 0 } 
+__________________(CONSEQ)
+    { z < 0 }                             
+    gif x <= 0 -> y := -x              __________________(CONSEQ)
+      | x >= 0 -> y := x                  { z < 0 ^ y < 0}
+    end;                                  z := z - y
+    { z < 0 ^ y < 0}                      { z < 0 } 
+__________________________________ (COMP)
+    { z < 0 }
+    gif x <= 0 -> y := -x
+      | x >= 0 -> y := x
+    end;
+    z := z - y
+    { z < 0 }
+__________________________________ (CONSEQ)
+    { z < 0 ^ x > -5 }
+    gif x <= 0 -> y := -x
+      | x >= 0 -> y := x
+    end;
+    z := z - y
+    { z < 0 }
+__________________________________ (WHILE)
+    { z < 0 }
+    while (x > -5) do
+    gif x <= 0 -> y := -x
+      | x >= 0 -> y := x
+    end;
+    z := z - y
+    end
+    { z < 0 ^ x <= -5}
+__________________________________ (CONSEQ)
+    { z < 0 }
+    while (x > -5) do
+    gif x <= 0 -> y := -x
+      | x >= 0 -> y := x
+    end;
+    z := z - y
+    end
+    { z < 0 }
+
