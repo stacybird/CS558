@@ -184,11 +184,25 @@ compile next_label exp = do { initLabel; comp exp}
               ; return([Label top_lab] ++ cs1 ++   
                        [Branchz bottom_lab] ++ cs2 ++ [Pop] ++         {- throw away value of body -}
                        [Branch top_lab, Label bottom_lab, Const 0])}   {- overall expression evalutes to 0 -}
-        comp ( For (e0,e1,e2,e3)) =  {-fix all this. ******-}
+{- 
+first evaluates e1 to a value v1 and 
+stores v1 into x . 
+It then repeats the following steps: 
+evaluate e2 to a value v2 ; 
+fetch x ; 
+if x > v2 
+  then terminate evaluation of the for, yielding the value 0; 
+otherwise, 
+  evaluate e3 and discard the yielded result, 
+  fetch x , add one to it, 
+  store back into x , and 
+repeat.-}
+        comp ( For (e0,e1,e2,e3)) =  {-*****************************-}
            do { top_lab <- new_label
               ; bottom_lab <- new_label
               ; cs1 <-  comp e1
               ; cs2 <- comp e2
+              ; cs3 <- comp e3
               ; return([Label top_lab] ++ cs1 ++   
                        [Branchz bottom_lab] ++ cs2 ++ [Pop] ++         {- throw away value of body -}
                        [Branch top_lab, Label bottom_lab, Const 0])}   {- overall expression evalutes to 0 -}
@@ -287,7 +301,7 @@ assign pos args = report pos (length args) 2 ":="
 -- There are 10 cases, one for each of the legal operators.
 
 operatorP = plus <|> times <|> minus <|> divid <|> ltheq <|> asg <|>
-            blck <|> writ <|> iff <|> whil
+            blck <|> writ <|> iff <|> whil <|> forr
   where plus   = do { symbol xxx "+";  return add}
         times  = do { symbol xxx "*";  return mul}
         minus  = do { symbol xxx "-";  return sub}
@@ -298,6 +312,7 @@ operatorP = plus <|> times <|> minus <|> divid <|> ltheq <|> asg <|>
         writ   = do { try(symbol xxx "write"); return write}
         iff    = do { try(symbol xxx "if"); return ifkey}
         whil   = do { try(symbol xxx "while"); return while}
+        forr   = do { try(symbol xxx "for"); return for}
         
 -- An expression is either an atom or a Lisp like parenthesized operation
 expP = try atom <|> sexpr
