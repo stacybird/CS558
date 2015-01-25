@@ -1,0 +1,51 @@
+{- Homework 3  Stacy Watts   swatts@pdx.edu -}
+(
+{- Basic boolean support -}
+(global false 0)
+(global true 1)
+(fun not (x) (if x false true))
+(fun and (x y) (if x y x))
+(fun or (x y) (if x x y))
+
+{- Equality on integers -}
+(fun eq (x y) (@and (<= x y) (<= y x)))
+
+{- Lists -}
+(global nil 0)               {- the empty list -}
+(fun cons (h t) (pair h t))  {- construct new list from old -}
+(fun head (l) (fst l))       {- extract the head -}
+(fun tail (l) (snd l))       {- extract the tail -}
+(fun isnil (l) (@not (ispair l)))  {- test for empty -}
+(fun list1 (x) (@cons x nil))      {- convenience functions -}
+(fun list2 (x y) (@cons x (@cons y nil)))
+(fun list3 (x y z) (@cons x (@cons y (@cons z nil))))
+
+(global temp 0)  {- ugly but necessary in the absence of local variables -}
+
+(fun gen (n)  {- generate the list [1,2,...,n] -}
+     (block 
+       (:= temp nil)
+       (while n (block 
+                  (:= temp (@cons n temp))
+                  (:= n (- n 1))))
+        temp))
+
+(fun length (l)  {- return the length of l -}
+     (block
+        (:= temp 0)
+        (while (@not (@isnil l)) 
+            (block
+               (:= temp (+ temp 1))
+               (:= l (@tail l))))
+        temp))
+
+(fun append (l m)  {- return (l @ m) -}
+     (if (@isnil l) m 
+                   (@cons (@head l) (@append (@tail l) m))))
+                   
+
+)
+
+{- a simple example -}
+(@cons (@length (@list1 0)) (@append (@gen 2) (@gen 3)))
+
