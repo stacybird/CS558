@@ -42,10 +42,28 @@
 (fun append (l m)  {- return (l @ m) -}
      (if (@isnil l) m 
                    (@cons (@head l) (@append (@tail l) m))))
-                   
+
+(fun minlist (l m) {- return min of the list into m -}
+     (if (@isnil l) m 
+                (block
+                    (:= temp (@head l))
+                    (if (<= temp m) 
+                        (@minlist (@tail l) temp)
+                        (@minlist (@tail l) m)))))
+
+(fun min (l)  {- return smallest value-}
+     (@minlist (@tail l) (@head l)))
+
+(fun zip (l1 l2)  {- return the pairwise of the two lists -}
+      (if (@isnil l1) 0
+          (if (@isnil l2) 0
+              (block
+                 (@cons (pair (@head l1) (@head l2))
+                 (@zip (@tail l1) (@tail l2)))))))
+
 
 )
 
-{- a simple example -}
-(@cons (@length (@list1 0)) (@append (@gen 2) (@gen 3)))
+{- my example using min and zip together. -}
 
+(@zip (@gen 5) (@cons (@min (@gen 2)) (@gen 3)))
