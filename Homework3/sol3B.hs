@@ -52,6 +52,7 @@ data Exp
   | Fst Exp
   | Snd Exp
   | Ispair Exp
+  | Local [Exp] Exp 
   
 data Def 
   = GlobalDef Vname Exp
@@ -299,6 +300,23 @@ interpE funs vars state exp = (traceG vars) -- this term: "(traceG vars)" enable
             (PairV _) -> return(IntV(boolToInt True),state1)
             other -> return(IntV(boolToInt False),state1)}
 
+   run state (Local x y) = 
+-- take in two things: x and y.
+-- x is unpacked into pairs of (var exp).
+-- those pairs go into the environment.  
+-- y is then evaluated in this new environment.
+-- that env ends at the end of the execution ).
+
+
+          do { let last [x] = x
+                   last (x:xs) = last xs
+               -- Eval all the arguments
+             ; (vs,state2) <- interpList local vars state args 
+               -- bind names to addresses, and allocate them on the heap             
+             ; let (pairs,state3) = bind formals vs state2  
+               -- run the body in new environment
+             ; (v,state4) <- interpE funs (push pairs vars2) state3 body 
+
 
 -- interpret a list from left to right. Be sure the
 -- state is updated for each element in the list.
@@ -391,8 +409,7 @@ assign pos [Var x,y] = Asgn x y
 assign pos [x,y] = error ("Near "++show pos++"\nfirst argument to ':=' is not a variable.")
 assign pos args = report pos (length args) 2 ":="
 
-local vs pos [x] = yourlocal vs x  
-  where yourlocal = error ("\nReplace 'yourlocal' with the constructor for 'local' you added to Exp.\n It should have type: [Exp] -> Exp -> Exp.")
+local vs pos [x] = Local vs x  
 local vs pos args = report pos (length args) 1 "local"
 
 setfst pos [x,y] = error "\nYou need to define setfst"
@@ -561,7 +578,6 @@ ppExp (Pair x y) = txt "(pair " PP.<> PP.nest 3 (PP.sep [ppExp x , ppExp y PP.<>
 ppExp (Fst x) = txt "(fst " PP.<> PP.nest 3 (PP.sep [ppExp x PP.<> txt ")"])
 ppExp (Snd x) = txt "(snd " PP.<> PP.nest 3 (PP.sep [ppExp x PP.<> txt ")"])
 ppExp (Ispair x) = txt "(ispair " PP.<> PP.nest 3 (PP.sep [ppExp x PP.<> txt ")"])
-{-
 ppExp (Local vs e) = txt "(local " PP.<> PP.nest 3 ( vars PP.$$ ppExp e PP.<> txt ")")
   where pairs = f vs
         f (x:y:zs) = (x,y): f zs
@@ -569,7 +585,6 @@ ppExp (Local vs e) = txt "(local " PP.<> PP.nest 3 ( vars PP.$$ ppExp e PP.<> tx
         vars :: PP.Doc
         vars = PP.parens(PP.sep (map h pairs))
         h (x,y) = PP.sep [ppExp x,ppExp y]
--}        
 
 
 ppDef (GlobalDef v e) = txt "(global " PP.<> PP.nest 3 (PP.sep [txt v, ppExp e PP.<> txt ")"])
