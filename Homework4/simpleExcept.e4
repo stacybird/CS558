@@ -1,0 +1,13 @@
+
+(
+
+(global z (= 'x' 'z'))
+
+(global x (+ 4 (try (* 3 (raise nogood 0))
+                    (@ nogood n 0)
+                    (@ nogood n 44))))
+
+
+)
+
+(raise nogood 2)

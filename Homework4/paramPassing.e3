@@ -1,0 +1,18 @@
+
+(
+
+(global x 5)
+(global y 2)
+(global p (pair 8 2))
+
+(fun swap (x y) (local (temp x) (block (:= temp x) (:= x y) (:= y temp))))
+
+(fun set (x y) (:= x y))
+
+(fun setfirst (x y) (@ set (fst x) y))
+
+(fun g (x) (+ (snd x) 6))
+
+)
+
+(+ 1 100)
