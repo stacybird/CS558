@@ -1,0 +1,17 @@
+{- Homework 4  Stacy Watts   swatts@pdx.edu -}
+{- sol4A3.e3 -}
+{- call-by-value-return v.s. call-by-value -}
+
+(
+(fun addFive (n) 
+        (:= n (+ n 5))
+)
+)
+
+{- Simple example.  Value Return is 10 vs Value is 5 -}
+(local (x 5)
+  (block
+    (@addFive x)
+    (write x)
+  )
+)
