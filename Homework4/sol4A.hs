@@ -1,5 +1,6 @@
 {-#LANGUAGE    FlexibleInstances   #-}
 -- Homework 4  Stacy Watts   swatts@pdx.edu
+-- Altered call-by-reference interpreter
 module Main where
 
 -- This files try various forms of parameter passing mechanisms
@@ -211,7 +212,12 @@ interpE funs vars state exp = (traceG vars) -- this term: "(traceG vars)" enable
                          do { (env3,state3) <- callByRef ns es (env,state)
                             ; return(extend n addr env3,state3) }
                    -- special case when arg is a (fst e)
-                   {- callByRef (n:ns) (Fst e:es) (env,state) = ... -}
+                   callByRef (n:ns) (Fst e : es) (env,state) =
+                     case lookUp vars e of
+                       NotFound -> error ("Unknown variable "++e)
+                       Found addr ->
+                         do { (env3,state3) <- callByRef ns es (env,state)
+                            ; return(extend n addr env3,state3) }
                    -- special case when arg is a (snd e)                   
                    {- callByRef (n:ns) (Snd e:es) (env,state) = ...  -}
                    -- case when arg is not a var, we must
