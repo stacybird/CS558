@@ -1,0 +1,16 @@
+{- Sample from professor website -}
+(
+(global x 5)
+(global p (pair 8 2))
+(fun swap (x y) 
+  (local (temp x) 
+    (block 
+      (:= temp x) 
+      (:= x y) 
+      (:= y temp)
+    )
+  )
+)
+)
+
+(+ 1 1)
