@@ -1,0 +1,16 @@
+{- Homework 4  Stacy Watts   swatts@pdx.edu -}
+{- sol4A2.e3 -}
+{- call-by-reference v.s. call-by-value-return -}
+
+(
+(global x 5)
+(fun addFive (n) 
+    (block
+    (:= n (+ n 5))
+    (write x)
+    )
+)
+)
+
+{- Simple example.  Reference is 10 vs Value Return is 5 -}
+    (@addFive x)
