@@ -1,8 +1,9 @@
 {- Homework 4  Stacy Watts   swatts@pdx.edu -}
 {- sol4B.e4 -}
-{-  -}
 
 
+
+{- lists functions from lists.e3  -}
 (
 {- Basic boolean support -}
 (global false 0)
@@ -46,16 +47,45 @@
 (fun append (l m)  {- return (l @ m) -}
      (if (@isnil l) m 
                    (@cons (@head l) (@append (@tail l) m))))
+
+{- table to map chars to ints, initially I assume it starts empty-}
+(global table 
+  (@cons 
+  (pair 'a' 1)
+    (@cons 
+    (pair 'b' 2)
+      (@cons 
+      (pair 'c' 3) 
+      nil)
+    )
+  )
+)
+
+(fun find (c t) {- find char c in table t -}
+    (if (@isnil t) (raise nogood 0 c)
+                   (if (= c (fst (@head t))) (snd (@head t))
+                                             (@find c (@tail t)))))
+
                    
 
 )
 
-{- a simple example -}
-(@cons (@length (@list1 0)) (@append (@gen 2) (@gen 3)))
+{- test writing out the table: 
+(write table)
+-}
 
+{- test finds 'c' to be 3.
+(@find 'c' table)
+-}
+{- before I can get the table exception to work, need to get the exception output to work. -}
+
+(raise nogood 2)
 
 {-
+(@find 'z' table)
+-}
 
+{-
 (
 (global z (= 'x' 'z'))
 
