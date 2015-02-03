@@ -219,7 +219,12 @@ interpE funs vars state exp = (traceG vars) -- this term: "(traceG vars)" enable
                          do { (env3,state3) <- callByRef ns es (env,state)
                             ; return(extend n addr env3,state3) }
                    -- special case when arg is a (snd e)                   
-                   {- callByRef (n:ns) (Snd e:es) (env,state) = ...  -}
+                   callByRef (n:ns) (Snd e:es) (env,state) = 
+                     case lookUp vars e of
+                       NotFound -> error ("Unknown variable "++e)
+                       Found addr ->
+                         do { (env3,state3) <- callByRef ns es (env,state)
+                            ; return(extend n addr env3,state3) }
                    -- case when arg is not a var, we must
                    -- create an address by allocating on the heap
                    callByRef (n:ns) (e:es) (env,state) =
