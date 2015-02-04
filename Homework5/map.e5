@@ -1,0 +1,50 @@
+{ A E5 program with a map function }
+
+
+{ lists are represented using pairs as in homework 3,
+  using the following encoding: }
+
+{
+
+(val true 1)
+(val false 0)
+(fun and (x y) (if (<= x 0) false y))
+(fun or (x y) (if (<= x 0) y true))
+(fun not (x) (if (<= x 0) true false))
+
+(fun eq (x y) (@and (<= x y) (<= y x)))
+  
+(fun cons (h t) (pair h t))
+(val nil 0)
+(fun head (l) (fst l))
+(fun tail (l) (snd l))
+(fun isnil (l) (@ not (ispair l)))
+  
+}  
+
+(val tim (+ 1 2))
+(fun h (x) (+ x tim))
+
+(fun map (f xs) (if (ispair xs)
+                    (pair (@ f (fst xs)) 
+                          (@ map f (snd xs)))
+                    xs))
+                    
+                            
+(fun plus1 (x) (+ x 1))
+
+
+(val g (@map plus1))
+
+
+(val ans (@g (pair 1 (pair 2 (pair 3 0)))) ) 
+
+
+in 
+           
+ans  { should yield (2.(3.(4.0))) } 
+
+
+
+
+            

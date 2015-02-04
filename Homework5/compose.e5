@@ -1,0 +1,14 @@
+{  defines a compose function }
+
+(fun compose (p) (lambda (x) (@ (fst p) (@ (snd p) x))))
+
+(fun plus1 (x) (+ x 1))
+      
+(fun minus1 (x) (- x 1))
+
+(val j (@compose (pair plus1 minus1)))
+
+in
+
+(@ j 0)  { should give 0 }
+  

@@ -1,0 +1,11 @@
+{  shows static scoping }
+
+(fun f (x) 
+       (let (fun g (y) (+ x y))
+            (val x 0)
+         in (@ g 1)))
+        
+in         
+
+(@ f 2))  { should evaluate to 3 }
+
