@@ -2,13 +2,36 @@
 {- sol5A.e5 -}
 {  defines a compose function }
 
-(fun compose (p) (lambda (x) (@ (fst p) (@ (snd p) x))))
+{- Basic boolean support -}
+(fun not (x) (if x 0 1))
+(fun and (x y) (if x y x))
+(fun or (x y) (if x x y))
+
+{- Equality on integers -}
+(fun eq (x y) (@and (<= x y) (<= y x)))
+
+{- Lists -}
+(fun cons (h t) (pair h t))  {- construct new list from old -}
+(fun head (l) (fst l))       {- extract the head -}
+(fun tail (l) (snd l))       {- extract the tail -}
+(fun isnil (l) (@not (ispair l)))  {- test for empty -}
+(fun list1 (x) (@cons x 0))      {- convenience functions -}
+(fun list2 (x y) (@cons x (@cons y 0)))
+(fun list3 (x y z) (@cons x (@cons y (@cons z 0))))
+
+
+(fun compose (p) (lambda (x) 
+                         (@ (fst p) 
+                            (@ (@ compose (snd p)) x)
+                         )
+                 )
+)
 
 (fun plus1 (x) (+ x 1))
       
 (fun minus1 (x) (- x 1))
 
-(val j (@compose (pair plus1 minus1)))
+(val j (@compose (pair plus1 (pair minus1 0))))
 
 in
 
