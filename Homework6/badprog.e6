@@ -1,0 +1,5 @@
+(
+(fun not Bool (y Bool) (if y False True))
+(fun f Int (x Int) (+ 2 3))
+)
+(@not (@ f 4))

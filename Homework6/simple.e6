@@ -1,0 +1,9 @@
+(
+(global n 7)
+(global b True)
+(global p (pair 5 True))
+(global l (cons 3 (cons 4 (cons 9 nil))))
+(global c 'a')
+)
+
+(+ n 1)

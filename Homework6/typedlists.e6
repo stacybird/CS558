@@ -1,0 +1,54 @@
+(
+
+{ Basic boolean support }
+(fun not Bool (x Bool) (if x False True))
+(fun and Bool (x Bool y Bool) (if x y x))
+(fun or Bool (x Bool y Bool) (if x x y))
+
+{ Equality on integers }
+(fun eq Bool (x Int y Int) (@and (<= x y) (<= y x)))
+
+{ Lists  }
+(fun isnil Bool (l [a]) (null l))  { test for empty }
+(fun list1 [a] (x a) (cons x nil))       { convenience functions }
+(fun list2 [a] (x a y a) (cons x (cons y nil)))
+(fun list3 [a] (x a y a z a) (cons x (cons y (cons z nil))))
+
+
+(fun gen [Int] (n Int)  { generate the list [1,2,...,n] }
+     (local (temp nil)
+     (block 
+       (:= temp nil)
+       (while (@not (@eq n 0)) (block 
+                  (:= temp (cons n temp))
+                  (:= n (- n 1))))
+        temp)))
+
+(fun length Int (l [a])  { return the length of l }
+     (local (temp 0)
+     (block
+        (:= temp 0)
+        (while (@not (@isnil l)) 
+            (block
+               (:= temp (+ temp 1))
+               (:= l (tail l))))
+        temp)))
+
+(fun append [a] (l [a]  m [a] )  { return (l ++ m) }
+     (if (@isnil l) m 
+                   (cons (head l) (@append (tail l) m))))
+                   
+(global ll (cons 3 (cons 6 (cons 7 nil)))) 
+(global pp (pair 5 7))
+
+{ demonstrate that functions can be muttually recursive }
+
+(fun even Bool (n Int) (if (@eq n 0) True (@ odd (- n 1))))
+(fun odd Bool (n Int) (if (@eq n 0)  False (@ even (- n 1))))
+                   
+
+)
+
+{ a simple example }
+(cons (@length (@list1 0)) (@append (@gen 2) (@gen 3))) 
+
