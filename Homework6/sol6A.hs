@@ -488,7 +488,7 @@ infer fs vs (term@(Null e)) =
         ,"\nThe term\n   "++show e
         ,"\nis not a list\n   "++show  t1 ] 
      ; return boolT } 
-infer fs vs (term@Nil) = notYet (sh term)
+infer fs vs (term@Nil) = return intT -- placeholder for now, I think there's a better way.
 infer fs vs (term@(While tst body)) = notYet (sh term)
   
 
