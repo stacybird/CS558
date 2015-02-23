@@ -390,7 +390,7 @@ infer fs vs (term@(Var s pos)) =
     Just sch -> instantiate sch
     Nothing -> error ("\nNear "++show pos++"\nUnknown var in type inference: "++ s)
 infer fs vs (term@(Int n)) = return intT 
-infer fs vs (term@(Char c)) = notYet (sh term)
+infer fs vs (term@(Char c)) = return charT  -- now returns a charT
 infer fs vs (term@(Bool b)) = return boolT 
 infer fs vs (term@(Local es body)) =
   do { let split [] = return vs
@@ -400,8 +400,15 @@ infer fs vs (term@(Local es body)) =
                 ; return((x,Sch [] t):zs)}
      ; vs2 <- split es
      ; infer fs vs2 body }
-infer fs vs (term@(Asgn e1 e2)) = notYet (sh term)
-infer fs vs (term@(Write e)) = notYet (sh term)
+infer fs vs (term@(Asgn e1 e2)) =   -- type e1 to be type eval e2
+  do { t1 <- infer fs vs e2  -- get type of e2
+     ; t2 <- infer fs vs e1
+     ; unify t1 t2 (loc term)
+         ["\nWhile infering the term\n   "++show term
+         ,"\nThe var and exp have different types" ]
+     ; return t2}  -- 
+
+infer fs vs (term@(Write e)) = infer fs vs e  -- type eval e
 infer fs vs (term@(Block es)) =
   do { ts <- mapM (infer fs vs) es
      ; return (last ts)}
