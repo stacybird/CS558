@@ -445,12 +445,18 @@ infer fs vs (term@(Div x y)) =
   do { check fs vs x intT "(/)"
      ; check fs vs y intT "(/)"
      ; return intT}
-infer fs vs (term@(Leq x y)) = notYet (sh term) 
+infer fs vs (term@(Leq x y)) = -- similar, but bool ret type
+  do { check fs vs x intT "(<=)"
+     ; check fs vs y intT "(<=)"
+     ; return boolT}
 infer fs vs (term@(Ceq x y)) =
   do { check fs vs x charT "(=)"
      ; check fs vs y charT "(=)"
      ; return boolT}
-infer fs vs (term@(Pair x y)) = notYet (sh term)
+infer fs vs (term@(Pair x y)) = -- similar, but return is type pair t1,t2
+  do { t1 <- infer fs vs x
+     ; t2 <- infer fs vs y
+     ; return (TyPair t1 t2)}
 infer fs vs (term@(Fst p)) = 
   do { t1 <- infer fs vs p
      ; a <- freshType; b <- freshType
@@ -459,7 +465,14 @@ infer fs vs (term@(Fst p)) =
          ,"\nThe term\n   "++show p
          ,"\nis not a pair\n   "++show  t1 ] 
      ; zonk a}
-infer fs vs (term@(Snd p)) = notYet (sh term)
+infer fs vs (term@(Snd p)) = -- similar to Fst
+  do { t1 <- infer fs vs p
+     ; a <- freshType; b <- freshType
+     ; unify (TyPair a b) t1 (loc p) 
+         ["\nWhile infering type of\n   "++show term
+         ,"\nThe term\n   "++show p
+         ,"\nis not a pair\n   "++show  t1 ] 
+     ; zonk b}
 infer fs vs (term@(Cons x y)) = 
   do { t1 <- infer fs vs x
      ; check fs vs y (TyList t1) "2nd arg to cons"
@@ -491,7 +504,10 @@ infer fs vs (term@(Null e)) =
 infer fs vs (term@Nil) =  -- placeholder for now, I think there's a better way.
   do { a <- freshType; 
      ; return (TyList a)}
-infer fs vs (term@(While tst body)) = notYet (sh term)
+infer fs vs (term@(While tst body)) = -- similar to if 
+  do { check fs vs tst boolT "while statement test"
+     ; t1 <- infer fs vs body  -- get type of body
+     ; return t1}  
   
 
 -- Check that GlobalDef and FunDef are used consistently with their
