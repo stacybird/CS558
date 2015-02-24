@@ -46,10 +46,18 @@
 
 (fun even Bool (n Int) (if (@eq n 0) True (@ odd (- n 1))))
 (fun odd Bool (n Int) (if (@eq n 0)  False (@ even (- n 1))))
+
+(fun reverse [a] (l [a]) (while (@not (isNil(l))) (:= (tail l) y) l)
+(fun rotate [a] (l [a]) (while (@not (isNil(l))) (:= (tail l) y) l)
+(fun qsort [Int] (l [Int]) (while (@not (isNil(l))) (:= (tail l) y) l)
                    
 
 )
 
 { a simple example }
+{- original
 (cons (@length (@list1 0)) (@append (@gen 2) (@gen 3))) 
+-}
+
+(@reverse (@list3 1 2 3))
 
