@@ -1,0 +1,156 @@
+-- Homework 6  Stacy Watts   swatts@pdx.edu
+
+
+********** PARSING ******************
+Program:
+((global n 7)
+ (global b True)
+ (global p (pair 5 True))
+ (global l (cons 3 (cons 4 (cons 9 nil))))
+ (global c 'a'))
+(+ n 1)
+
+********** Type Checking *************
+
+n::Int
+b::Bool
+p::(Int . Bool)
+l::[Int]
+c::Char
+
+******** LOADING DEFS **************
+n b p l c
+
+********** EXECUTING BODY **********
+8
+
+*********** ENTERING READ EVAL PRINT ***************
+type ':q' to exit, type 'trace' to flip tracer state
+
+enter Exp>
+
+
+1. 
+
+enter Exp>
+(<= 1 'a')
+user error (
+*** Error, near "unknown location" (line 0, column 0)
+Int =/= Char (Different type constuctors)
+Checking (<=)
+While infering the type of
+   'a'
+Expected type: Int
+Computed type: Char)
+
+
+2. 
+
+enter Exp>
+(<= 2 True)
+user error (
+*** Error, near "unknown location" (line 0, column 0)
+Int =/= Bool (Different type constuctors)
+Checking (<=)
+While infering the type of
+   True
+Expected type: Int
+Computed type: Bool)
+
+
+3. 
+
+enter Exp>
+(snd 1)
+user error (
+*** Error, near "unknown location" (line 0, column 0)
+(t7 . t8) =/= Int (Different types)
+While infering type of
+   (snd 1)
+The term
+   1
+is not a pair
+   Int)
+
+
+4. 
+
+enter Exp>
+(snd True)
+user error (
+*** Error, near "unknown location" (line 0, column 0)
+(t9 . t10) =/= Bool (Different types)
+While infering type of
+   (snd True)
+The term
+   True
+is not a pair
+   Bool)
+
+5. 
+
+enter Exp>
+(while 'a' n)
+user error (
+*** Error, near "unknown location" (line 0, column 0)
+Bool =/= Char (Different type constuctors)
+Checking while statement test
+While infering the type of
+   'a'
+Expected type: Bool
+Computed type: Char)
+
+6. 
+
+enter Exp>
+(while (+ 1 1) (+ n 1))
+user error (
+*** Error, near "unknown location" (line 0, column 0)
+Bool =/= Int (Different type constuctors)
+Checking while statement test
+While infering the type of
+   (+ 1 1)
+Expected type: Bool
+Computed type: Int)
+
+7. 
+
+enter Exp>
+(head nil)
+Non 'cons' cell in head: []
+
+8. 
+
+enter Exp>
+(+ 'a' 1)
+user error (
+*** Error, near "unknown location" (line 0, column 0)
+Int =/= Char (Different type constuctors)
+Checking (+)
+While infering the type of
+   'a'
+Expected type: Int
+Computed type: Char)
+
+9. 
+
+enter Exp>
+(= n 'a')
+user error (
+*** Error, near "keyboard input
+(= n 'a')" (line 1, column 4)
+Char =/= Int (Different type constuctors)
+Checking (=)
+While infering the type of
+   n
+Expected type: Char
+Computed type: Int)
+
+10. 
+
+enter Exp>
+(write 's')
+'s'
+'s':: Char
+
+
