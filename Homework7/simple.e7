@@ -1,0 +1,15 @@
+(module Simple in prelude out everything)
+                   
+(global ten Int 10)
+
+(fun and Bool (x Bool y Bool) (if x y x))
+(fun eq Bool (x Int y Int) (@and (<= x y) (<= y x)))
+
+{- functions can be mutually recursive -}
+(fun even Bool (n Int) (if (@eq n 0) True (@ odd (- n 1))))
+
+(fun odd Bool (n Int) (if (@eq n 0)  False (@ even (- n 1))))
+
+main
+
+(@odd 3)

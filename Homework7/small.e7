@@ -1,0 +1,19 @@
+(module Small in (union prelude (sig (val tom Int))) out everything)
+
+(global temp (Stack a) emptySt)
+
+(adt (Stack a) [a]
+     (global emptySt (Stack a) (#nil))
+     (fun push (Stack a) (x a xs (Stack a)) (#cons x xs))
+     (fun pop ( a . (Stack a)) (xs (Stack a)) 
+              (#pair (!cons 0 xs) (!cons 1 xs)))
+     )
+     
+
+     
+
+(global www Char 'c')     
+
+main
+
+(:= tom (+ tom 1))

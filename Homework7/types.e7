@@ -1,0 +1,42 @@
+(signature EnvSig "env.sig")
+
+(module Types in prelude out everything)
+
+(data (Tree a)
+   (#tip a)
+   (#fork (Tree a) (Tree a)))
+
+(data (Color) (#red) (#blue) (#green))
+   
+(data (Result a) (#found a) (#notFound))  
+
+(global nil [a] (# nil))  
+
+(fun head h (x [h]) (!cons 0 x))
+(fun tail [a] (x [a]) (!cons 1 x))
+(fun fst a (x (a.b)) (!pair 0 x))
+(fun snd b (x (a.b)) (!pair 1 x))
+(fun null Bool (x [a]) (?nil x))
+(fun consP Bool (x [a]) (?cons x))
+
+{- Basic boolean support -}
+(fun and Bool (x Bool y Bool) (if x y x))
+{- Equality on integers -}
+(fun eq Bool (x Int y Int) (@and (<= x y) (<= y x)))
+
+(adt (Env a) [(Int . a)]
+     (global empty (Env a) nil)
+
+     (fun extend (Env a) (key Int object a table (Env a))
+          (#cons (#pair key object) table))
+          
+     (fun lookup (Result a) (tab (Env a) key Int)
+          (if (?nil tab) (#notFound)
+              (if (@eq key (@fst (@head tab))) (#found (@snd (@head tab)))
+                  (@lookup (@tail tab) key))))  )
+
+
+        
+main
+
+0
