@@ -4,8 +4,8 @@
 (module Env2 in prelude out EnvSig)
 
 (data (Tree a)
-   (#tip a)
-   (#fork (Tree a) (Tree a)))
+   (#leaf)
+   (#node Int a (Tree a) (Tree a)))
 
 (data (Color) (#red) (#blue) (#green))
    
