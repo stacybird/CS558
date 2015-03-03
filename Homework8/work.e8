@@ -1,0 +1,25 @@
+
+(assoc : right)
+
+(val list
+  (object
+     (def nil 
+        (object (method null () True)
+                (method : (item) (list.cons item (list.nil)))
+                (method string () "")))
+               
+                
+     (method cons (y x)
+        (object (def head y)
+                (var tail x)
+                (method : (y) (list.cons y self))
+                (method string () (if True (++ "A" (self.tail.string)) "B"))
+                (method null () False)
+        ))
+  ))
+
+{- (val xs (: 2 3 4 (list.nil)))  -}
+
+init
+
+0

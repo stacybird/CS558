@@ -1,0 +1,163 @@
+
+(assoc : right)
+
+(fun plus (x) (+ x (return plus 99)))
+
+(val tim 99)
+
+(ref tom)
+
+(val test
+   (object 
+     (var x)
+     (method inc () (:= (self.x) (self.x.(+ 1))))
+     init
+     (:= (self.x) 99)))
+     
+(val bool
+   (object 
+      (def true
+           (object 
+              inherits True 
+              (method and (x) x)
+              (method or (x) self)
+              (method not () (bool.false))
+              (method ifTrueFalse (x y) (x.apply))
+              ))
+   
+      (def false
+           (object 
+              inherits False
+              (method and (x) self)
+              (method or (x) x)
+              (method not () (bool.true))
+              (method ifTrueFalse (x y) (y.apply))
+              ))
+      ))
+
+           
+(val list
+  (object
+     (def nil 
+        (object (method null () True)
+                (method : (item) (list.cons item (list.nil)))
+                (method asString () "")
+                (method take (n) (list.nil))))
+                
+     (method cons (y x)
+        (object (def head y)
+                (def tail x)
+                (method : (y) (list.cons y self))
+                (method asString () 
+                     (if (self.tail.null)
+                         (y.asString)
+                         (++ (y.asString) "," (x.asString))))
+                         
+                (method null () False)
+                (method take (n) (if (n.=0)
+                                     (list.nil)
+                                     (x.(take (n.- 1)).: y)))
+        ))
+  ))
+       
+(fun drop (n xs) 
+   (if (n.= 0) xs (if (xs.null) (list.nil) (@drop (n.- 1) (xs.tail)))))
+   
+
+(val nil (list.nil))
+(fun cons (x y) (list.cons x y))
+
+
+(val special  (object (method asString () "special")
+                      (def this self)
+                      (method me () self)))   -- compare me and this in extraSpecial below
+                      
+(val extraSpecial (object inherits special
+              (method asString () "extraSpecial")
+              (def thee "pink")))
+                
+(fun pair ( x y)
+  (object (def fst x) 
+          (def snd y)
+          (method asString ( ) 
+            (++ "(" (self.fst.asString) ","
+                (self.snd.asString) ")"))))
+  
+                
+
+
+(val twoThree (@cons 2 (@cons 3 twoThree)))
+
+
+(val i3 
+   (object inherits done 
+       (def x 5) 
+       (def y 3) 
+       (method asString () 
+           (++ (super.asString)
+               " + "
+               (self.x.asString)
+               " + "
+               (self.y.asString)))))
+               
+(val cell
+   (object (var count 0)
+           (method new (x)
+             (object
+                (def head x)
+                (def number (cell.count))
+                (var tail)
+                init (:= (cell.count) (+ 1 (cell.count)))))
+           ))
+           
+
+{- hidden static variable -}
+(val cell2
+   (local (ref count 0)
+    (object (method new (x)
+              (object
+                 (def head x)
+                 (def number count)
+                 (var tail)
+                 init (:= count (+ 1 count))))
+            )) )         
+
+(fun temp (x y)
+  (local (val hidden x)
+         (object (def age y)
+            (method foo (w) 
+               (+ hidden (self.age) w)))))
+
+(val tt (@temp 4 7))
+
+(fun not (x) (if x False True))
+
+(fun elem (x xs) 
+  (local (ref ptr xs)
+      (block (while (@not (ptr.null))
+                (if (ptr.head.= x) 
+                    (return elem True)
+                    (:= ptr (ptr.tail))))
+                False)))
+                                
+
+(fun NarySum (n x) 
+    (if (= n 0) x
+        (lambda (y) (@ NarySum (- n 1) (+ x y)))))
+        
+(val ones (@cons 1 twos))
+(val twos (@cons 2 ones))
+
+
+  
+(data (tree a) (#Leaf) 
+               (#Tip key value) 
+               (#Node key value left right))
+               
+(data (exp) (#Const value)(#Add op1 op2)(#Neg op1)(#Mul op1 op2))
+
+{- Search trees, mutable data,  Pair -}                
+                
+init
+
+0

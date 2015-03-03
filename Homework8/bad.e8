@@ -1,0 +1,58 @@
+{-
+(val tree
+  (object
+      
+      (def leaf
+         (object
+           (method type () 1)
+           (method asString () "leaf" )
+            (method search(x) done)))
+
+
+      (method tip (x y)
+        (object
+          (def key x)
+          (def value y)
+          (method type () 2)
+          (method search(x)
+              (if (= x (self.key) )
+                       y
+                      done ))
+          (method asString () (++ (self.key) "," (self.value)))   ))
+     
+
+     (method node (k y l r)
+        (object
+           (def key k)
+           (def value y)
+           (def left l)
+           (def right r)
+           (method type () 3)
+           (method search(x)
+              (if (= x (self.key))
+                  y
+                  (if (x.<= (self.key))
+                                             
+                            (l.search x)
+                                
+                            (r.search x) )))  ))
+
+
+))
+
+(val testtree
+   (tree.node 9 "cat" (tree.node 7 "tim" (tree.leaf) (tree.tip 8 "tom")) 
+                  (tree.node 12 "mary" (tree.node 11 "paul" (tree.tip 10 "ron") (tree.leaf))
+                                   (tree.tip 15 "neal"))))
+
+(val t1 (tree.node 9 "cat" (tree.leaf) (tree.leaf)))
+
+-}
+
+(val test (object (def b 1)
+                  (def a (self.b.+ 5))))
+                  
+
+init 0
+
+
