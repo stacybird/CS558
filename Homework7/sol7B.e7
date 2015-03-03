@@ -1,8 +1,7 @@
 {- Homework 7  Stacy Watts   swatts@pdx.edu -}
 (signature EnvSig "env.sig")
 
-{- (module Env2 in prelude out EnvSig) -}
-(module Env2 in prelude out everything)
+(module Env2 in prelude out EnvSig)
 
 (data (Mapping a)
    (#nope)
@@ -18,6 +17,7 @@
 
 (global nil [a] (# nil))  
 (global none (Tree a) (# leaf))  
+(global zero Char '0')
 
 (fun head h (x [h]) (!cons 0 x))
 (fun tail [a] (x [a]) (!cons 1 x))
@@ -38,6 +38,7 @@
 (fun root3 (Tree x) (x (Tree r))  (!node 2 x))
 
 {- mapping functions -}
+(fun exist (Result c) (b (Mapping a)) (if (?nope b) (#notFound) (!mapping 1 b)))
 
 (adt (Env a) (Tree (Int . a))
      (global empty (Env a) none)
