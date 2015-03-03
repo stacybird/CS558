@@ -1,7 +1,7 @@
 {- Homework 7  Stacy Watts   swatts@pdx.edu -}
 (signature EnvSig "env.sig")
 
-(module Env2 in prelude out EnvSig)
+(module Env3 in prelude out EnvSig)
 
 (data (Mapping a)
    (#nope)
