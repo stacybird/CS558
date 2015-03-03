@@ -1,0 +1,51 @@
+{- Homework 7  Stacy Watts   swatts@pdx.edu -}
+(signature EnvSig "env.sig")
+
+{- (module Env2 in prelude out EnvSig) -}
+(module Env2 in prelude out everything)
+
+(data (Tree a)
+   (#leaf)
+   (#node Int a (Tree a) (Tree a)))
+
+(data (Color) (#red) (#blue) (#green))
+   
+(data (Result a) (#found a) (#notFound))  
+
+(global nil [a] (# nil))  
+(global none (Tree a) (# leaf))  
+
+(fun head h (x [h]) (!cons 0 x))
+(fun tail [a] (x [a]) (!cons 1 x))
+(fun fst a (x (a.b)) (!pair 0 x))
+(fun snd b (x (a.b)) (!pair 1 x))
+(fun null Bool (x [a]) (?nil x))
+(fun consP Bool (x [a]) (?cons x))
+
+
+{- Basic boolean support -}
+(fun and Bool (x Bool y Bool) (if x y x))
+{- Equality on integers -}
+(fun eq Bool (x Int y Int) (@and (<= x y) (<= y x)))
+
+{- tree functions -}
+(fun root Int (x (Tree r))  (!node 0 x))
+(fun root2 a (x (Tree r))  (!node 1 x))
+(fun root3 (Tree x) (x (Tree r))  (!node 2 x))
+
+(adt (Env a) (Tree (Int . a))
+     (global empty (Env a) none)
+
+     (fun extend (Env a) (key Int object a table (Env a))
+          (#node  key object table (#leaf) ) )
+          
+     (fun lookup (Result a) (tab (Env a) key Int)
+          (if (?leaf tab) (#notFound)
+              (if (@eq key (@root tab)) (#found (@root2 tab))
+                  (@lookup (@root3 tab) key))))  )
+
+
+        
+main
+
+0
