@@ -4,6 +4,10 @@
 {- (module Env2 in prelude out EnvSig) -}
 (module Env2 in prelude out everything)
 
+(data (Mapping a)
+   (#nope)
+   (#mapping Int (Result a)))
+
 (data (Tree a)
    (#leaf)
    (#node Int a (Tree a) (Tree a)))
@@ -32,6 +36,8 @@
 (fun root Int (x (Tree r))  (!node 0 x))
 (fun root2 a (x (Tree r))  (!node 1 x))
 (fun root3 (Tree x) (x (Tree r))  (!node 2 x))
+
+{- mapping functions -}
 
 (adt (Env a) (Tree (Int . a))
      (global empty (Env a) none)
