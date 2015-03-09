@@ -1,0 +1,414 @@
+
+<title> CS558 Homework #8 </title>
+
+
+<CENTER>
+<BIG> CS558 Homework #8 </BIG> <BR>
+ Due 5:00 PM, Mondday, March 09, 2015 <Br>
+</CENTER>
+
+<p>
+
+Homework must be submitted via D2L. All submitted files (2 for this assignment <B>sol8A.e8</B>
+and <B>sol8B.e8</B>) must be submitted in the
+appropriate D2L directory in the drop box HW8. It is your responsibility to submit
+the homework in the proper format with the proper names. For example include a
+comment at the very top with your name and email address.
+<PRE>
+-- Homework 7  Tom Smith   tom_smith@gmail.com
+</PRE>
+
+
+<p>
+All programs mentioned can be downloaded from the this document
+<ul><li> <A HREF="../code/hw8/Hw8.hs">hw8.hs</A>. A definitional interpreter (in Haskell) for language E8.
+<li> <A HREF="../code/hw8/test1.e8">test1.e8</A>. A file with E8 programs illustrating the examples in this homework description.
+
+</ul>
+
+<p>
+In this homework we consider a variant of simple un typed object oriented language we call E8.
+The language, E8, has the following features:
+<p>
+<ol>
+<li> First class objects which implement encapsulation. Every object
+is solely characterized by the requests it can respond to.
+<li> Inheritance. Objects can inherit behavior from other objects.
+<li> Dynamic binding. The binding of behaviors to an object is done dynamically at run time.
+<li> Naming. The language separates the naming of things from the encapsulation of
+things in objects.
+<li> A simple exception system, along the lines of <A HREF="homework4.html">Homework4</A>
+<li> The use of dynamic typing. Typing issues are checked at run time
+</ol>
+<p>
+E8's concretized
+abstract syntax is given by the following grammar:
+
+<p>
+
+<p>
+
+<PRE>
+prog := { decl }  'init' exp
+
+decl := '(' 'val' id exp ')'                            -- a named value (immutable variable)
+      | '(' 'ref' id [ exp ] ')'                        -- mutable variable
+      | '(' 'fun' id '(' {id } ')' exp ')'              -- function
+      | '(' { 'left' | 'right' | 'non' } operator ')'   -- associativity of operator
+
+field := '(' 'def' id exp ')'                           -- a constant field
+      |  '(' 'var' id [ exp ] ')'                       -- a mutable field
+      |  '(' 'method' id '(' { id } ')' exp ')'         -- a method
+
+exp :=
+  id
+| int
+| bool
+| string
+|
+| '(' 'local' { decl } exp ')'        -- Binding or naming mechanism
+| '(' 'write' string exp ')'          -- output
+| '(' 'block' { exp } ')'             -- sequencing
+| '(' ':=' id exp ')'                 -- assigment to mutable variables
+
+| '(' object [ 'inherits' exp ] { field } [ 'init' exp ] '}'  -- object construtction
+| '(' exp '.' fieldselection { exp } ')'                      -- message request
+| 'self'                                                      -- the current ject
+| 'done'                                                      -- the unit object
+| 'super'                                                     -- the super class of the current object
+| '(' 'return'  id exp ')'                                    -- An exception, non-standard return from a method.
+
+| '(' 'if' exp exp exp ')'
+| '(' 'while' exp exp ')'
+| '(' '@' exp { exp } ')'             -- function application
+| '(' 'lamba' '(' { id } ')' exp ')'  -- lambda abstraction
+| '(' operator { exp } ')'            -- associative "infix" operators application
+| '[]'                                -- the object with no behaviors
+
+
+fieldselection := id | '(' id { exp } ')'
+
+id := letter { letter | digit }
+operator = ["+*-/!@#$%^&~=?<>:]+     -- a sequence of these operator characters
+</PRE>
+
+<p>
+
+As before, comments may be included by enclosing them between comment braces '{-' and
+'-}', and they may be nested.
+
+<p>
+
+Note that the syntax for expressions has been divided into groups, where
+each group supports one aspect of the language.
+
+<ul>
+
+<li> Constants and variables.
+
+<li> Imperative control structures.
+<li> The core object calculus, for creating and sending objects messages.
+
+<li> The derived forms. These language features can all be implemented
+in terms of the core language. They are included because they make programming easier, but
+they add no expressive power.
+</ul>
+
+
+A sample file, which illustrates many of E8's features can be found here
+<A HREF="../code/HW8/test1.e8">test1.e8</A>. This file illustrates several key points of the language
+
+<ul>
+<li> <B>Program structure.</B> <BR>
+A program consists of a sequence of declarations, and the main body,  after
+the keyword 'init'.
+
+<li> <B>Scope Rules</B><BR>
+Note that every declaration is in scope in every other declaration.
+This allows mutually recursive functions. The order of declarations in the file
+does not matter.
+
+
+<li> <B>Key Features.</B> <BR>
+  There are two main features. These features are meant to separate name binding from field declaration.
+  <ol>
+  <li> Declarations appear in two places. A program is a sequence of declarations, and a 'local'
+  expression is a sequence of declarations. Declaration are used to name objects, and to bring them into
+  scope. As discussed above, all declarations in a single (program) or local
+  can be mutually recursive. <B>Declarations perform name binding.</B>
+  <li> Objects are composed of fields, a field describes the data stored in the object. The name of
+  a field is not brought into scope. But a field name can be used to select the value of one of
+  an objects fields. For example ((+ 3 4).asString) selects the "asString" field from the object 7.
+  <B>Objects perform encapsulation.</B>
+  <li> Note that field names and names bound by declarations are two different things.
+  </ol>
+
+<li> <B>Object Evaluation.</B><BR> Every program evaluates to an object. An object consists of a small amount of state
+(for primitive types only) and a set of methods (or behaviors) that it will respond to.
+For example observe the following E8 language interaction
+
+<PRE>
+enter Exp>
+4
+4 [+,-,*,/,asString,=,<=]
+</PRE>
+
+The valuation of the expression '3' evaluates to the object that responds to requests
+for '+', '-', '*', '/', 'asString', '=' and '<=' .
+
+
+<li> <B> Language E8 by Example</B> <BR>
+Most important parts of the langauge have to do with object creation and method request.
+<ul>
+
+<li> <B>Object Creation.</B> <BR>
+Objects are created with the literal object expression. For example.
+
+<PRE>
+enter Exp>
+(object (def x 5) (def y 2) (method add () (+ (self.x) (self.y))))
+[x,y,add]
+</PRE>
+
+with three field, two constants and one method. Note because field definition does not
+bring any names into scope. The method 'add' must use '(self.x)' to access that
+objects 'x' field.
+<p>
+
+<li> <B>Method requests.</B> <BR>
+Objects respond to messages. To program this we use a request expression.
+(' exp '.' fieldselection { exp } ')' . Examples include
+'(x.+ 4)'  and '(x.(<= 5).and y)' . Here are a few sample interactions.
+
+<PRE>
+enter Exp>
+((object (def x 5) (def y 2) (method add () (+ (self.x) (self.y)))) . add )
+7 [+,-,*,/,asString,=,<=]
+
+enter Exp>
+((object (def x 5) (def y 2) (method add () (+ (self.x) (self.y)))) . bad )
+Message not understood: bad
+   [x,y,add]
+
+enter Exp>
+("abc".(++ "123").len)
+6 [+,-,*,/,asString,=,<=]
+
+enter Exp>
+("abc".(++ "123").len.(+ 1))
+7 [+,-,*,/,asString,=,<=]
+enter Exp>
+</PRE>
+
+Note that if an object does not respond to a behavior a runtime error is raised.
+<p>
+<li> <B>Object Inheritance.</B><BR>
+When an object is created it can inherit behavior from another object.
+
+<PRE>
+enter Exp>
+done
+done [asString]
+
+enter Exp>
+(object inherits done (def x 5) (def y 3))
+done [x,y,asString]
+enter Exp>
+
+((object inherits done (def x 5) (def y 3)).asString)
+"done" [sub,at,++,len,=,asString,<=]
+</PRE>
+
+Note that the simple object 'done' has only one behavior 'asString'. The anonymous object
+inherits that behavior. And if it is called on the new object it behaves exactly as its
+parent object.
+<p>
+
+<li> <B>Method overriding.</B> <br>
+One can override the behavior be adding a method
+with the same name as one of the inherited methods, and one can access the old
+methods by the use of 'super'. Consider the declaration of 'i3', and the interaction
+in the scope of that declaration.
+
+<PRE>
+(val i3
+   (object inherits done
+       (def x 5)
+       (def y 3)
+       (method asString ()
+           (++ (super.asString)
+               " + "
+               (self.x.asString)
+               " + "
+               (self.y.asString)))))
+
+
+enter Exp>
+i3
+done[x 5, y 3]
+enter Exp>
+(i3.asString)
+"done + 5 + 3"
+enter Exp>
+</PRE>
+
+<p>
+<li> <B>Object initialization.</B><BR>
+Any object can have a optional initialization expression, that is executed after the object
+is created. Often the initialization us used
+to fill in the mutable variables of the object, but it can be used for
+any side effect. For example below, we define an object 'cell' with a method 'new', which returns
+a new object when called. This new object, has an initialization that increments the
+'count' field of the enclosing cell object.
+
+<PRE>
+(val cell
+   (object (var count 0)
+           (method new (x)
+             (object
+                (def head x)
+                (def number (cell.count))
+                (var tail)
+                init (:= (cell.count) (+ 1 (cell.count)))))
+           ))
+
+enter Exp>
+(cell.new 4)
+[head 4, number 0, tail@6]
+enter Exp>
+(cell.new 5)
+[head 5, number 1, tail@7]
+</PRE>
+
+Note that every new cell has a new (and different) number.
+<p>
+</ul>
+
+<Li> <B>Derived Forms.</B> <BR>
+The object core of language E8 is very expressive. In fact many of the features of
+our earlier languages (E1, E2, etc.) can be directly expressed within the core calculus.
+In fact all the features below are implemented by macro-expansion into core
+language features.
+<PRE>
+| '(' 'if' exp exp exp ')'
+| '(' 'while' exp exp ')'
+| '(' '@' exp { exp } ')'                -- function application
+| '(' 'lambda' '(' { var } ')' exp ')'   -- lambda abstraction
+| '(' operator { exp } ')'               -- associative "infix" operators application
+| '[]'                                   -- the object with no behaviors
+</PRE>
+One can observe this using the <B>:m expression</B> in the interactive loop.
+
+
+<PRE>
+enter Exp>
+:m (if tst thencl elsecl) -- if expressions
+(if tst thencl elsecl)
+   -->
+(tst.ifTrueFalse
+ (local (fun lam () thencl) lam)
+ (local (fun lam () elsecl) lam))
+
+enter Exp>
+:m (lambda (x y) (+ x y)) -- lambda abstarction
+(\ (x y) (+ x y))
+   -->
+(local (fun lam (x y) (+ x y)) lam)
+enter Exp>
+:m (@ f 4 5 6)            -- function application
+(@ f 4 5 6)
+   -->
+(f.apply 4 5 6)
+
+enter Exp>
+:m (while tst body)       -- while loops
+(while tst body)
+   -->
+(local
+ (fun loop ()
+  (tst.ifTrueFalse
+   (local (fun lam () (block body (loop.apply) )) lam)
+   (local (fun lam () done) lam)))
+ (loop.apply))
+
+enter Exp>
+:m (+ 2 3 4 5)            -- left associative 'infix' operator
+(+ 2 3 4 5)
+   -->
+(((2.+ 3).+ 4).+ 5)
+
+enter Exp>
+:m (++ "a" "b" "c" "d")   -- right associative 'infix' operator
+(++ "a" "b" "c" "d")
+   -->
+((("d".++ "c").++ "b").++ "a")
+
+enter Exp>
+:m []                     -- the empty object with no behavior
+[]
+   -->
+(object)
+</PRE>
+
+<p>
+<H3>What to Do</H3>
+<p>
+
+Your job in this homework is to write 2 small object oriented programs
+
+<ul>
+
+<li> Define a tree data structure, and implement binary search.
+
+<ol>
+
+<li> Implement binary search trees. Your tree should be similar to the Tree
+type from question 2 of <A HREF="homework7.html">homework7.html</A>.
+<PRE>
+(data (Tree a)
+   (#leaf)
+   (#Tip Int a)
+   (#node Int a (Tree a) (Tree a)))
+   </PRE>
+Note the extra tip node. Your tree should be implemented using objects since their
+are no data declarations in E8. Define a named class, <B>tree</B>, along the lines of the <B>list</B> class in
+<A HREF="../code/HW8/test1.e8">test1.e8</A>. The <B>tree</B> class should have exactly 3 fields.
+<ol>
+<li> A (def leaf ...)
+<li> A (method tip (key value) ...)
+<li> A (method node (key value left right) ...)
+</ol>
+Each field, should in term, return another object. Just as <B>nil</B> and <B>cons</B> do in the <B>list</B> class.
+
+<li> Don't forget you'll need one or more fields to test if a particular node is a leaf or a tip or a node.
+<li> To write binary search you will also need to have search methods in all the constructors
+of <B>tree</B>.
+<li> You should also implement an <B>asString</B> methods for each of the constructors of trees.
+<li> You must provide a tree (as a <B>val</B> declarations called <B>testtree</B>) with at
+least 6 values.
+<li> Thoroughly test both search and asString.
+<li> Put all this in a file called <B>sol8A.e8</B>, and submit it to D2L.
+</ul>
+<p>
+
+<li> Define a mutable list structure, and use inheritance.
+<ol>
+<li> This
+will be similar to regular lists, except the tail must be a mutable variable.
+<li> Write an asString method that print lists like [1,2,23,6] (hint
+you might want to write more than one method to do this to ass the surrounding brackets).
+<li> Write a method that reverses the list inplace by reversing the pointers.
+This will need to use assignment to the tail of lists <B>(:= (t.tail) y)</B>.
+<li> You must provide a list (as a <B>val</B> declaration called <B>testlist</B>) with at
+least 6 values.
+<li> Now make a new type colorList, where each element is paired with a string telling its color.
+Use inheritance. Your reversal methods should still work.
+<li> Test all your code thoroughly.
+<li> Put all this in a file called <B>sol8B.e8</B>, and submit it to D2L.
+
+</ol>
+</ul>
+</ul>
+
+
+
